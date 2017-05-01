@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="Stylesheet" type="text/css" href="style.css">
+<title>gnuplot绘图工具</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+
+<div id="Gnuplot"><h1 id="Gnuplot" class="justcenter">Gnuplot</h1></div>
+<hr />
+<hr />
+
+<ul>
+<li>
+<a href="gnuplot绘图工具.html#数学表达式">#数学表达式</a>
+
+<li>
+<a href="gnuplot绘图工具.html#简单函数绘图">#简单函数绘图</a>
+
+<li>
+<a href="gnuplot绘图工具.html#坐标取值范围及刻度">#坐标取值范围及刻度</a>
+
+<li>
+<a href="gnuplot绘图工具.html#简单数据绘图">#简单数据绘图</a>
+
+<li>
+<a href="gnuplot绘图工具.html#点线风格">#点线风格</a>
+
+<li>
+<a href="gnuplot绘图工具.html#多组数据绘图">#多组数据绘图</a>
+
+<li>
+<a href="gnuplot绘图工具.html#输出eps图片">#输出eps图片</a>
+
+<li>
+<a href="gnuplot绘图工具.html#输出pdf和pgn图片">#输出pdf和pgn图片</a>
+
+<li>
+<a href="gnuplot绘图工具.html#Enhanced文本模式">#Enhanced文本模式</a>
+
+<li>
+<a href="gnuplot绘图工具.html#插入LATEX公式">#插入LATEX公式</a>
+
+<li>
+<a href="gnuplot绘图工具.html#栅格以及方程数值解估算">#栅格以及方程数值解估算</a>
+
+<li>
+<a href="gnuplot绘图工具.html#第二坐标轴">#第二坐标轴</a>
+
+<li>
+<a href="gnuplot绘图工具.html#Gnuplot的坐标系统及标签">#Gnuplot的坐标系统及标签</a>
+
+<li>
+<a href="gnuplot绘图工具.html#箭头">#箭头</a>
+
+<li>
+<a href="gnuplot绘图工具.html#边框和坐标轴">#边框和坐标轴</a>
+
+<li>
+<a href="gnuplot绘图工具.html#图例">#图例</a>
+
+<li>
+<a href="gnuplot绘图工具.html#对数坐标">#对数坐标</a>
+
+<li>
+<a href="gnuplot绘图工具.html#图像尺寸">#图像尺寸</a>
+
+<li>
+<a href="gnuplot绘图工具.html#极坐标">#极坐标</a>
+
+<li>
+<a href="gnuplot绘图工具.html#参数方程">#参数方程</a>
+
+<li>
+<a href="gnuplot绘图工具.html#误差条">#误差条</a>
+
+<li>
+<a href="gnuplot绘图工具.html#拟合">#拟合</a>
+
+<li>
+<a href="gnuplot绘图工具.html#简单3D函数绘图">#简单3D函数绘图</a>
+
+<li>
+<a href="gnuplot绘图工具.html#数据文件存储格式">#数据文件存储格式</a>
+
+<li>
+<a href="gnuplot绘图工具.html#3D数据曲面绘图及边框">#3D数据曲面绘图及边框</a>
+
+<li>
+<a href="gnuplot绘图工具.html#Pm3d绘图">#Pm3d绘图</a>
+
+<li>
+<a href="gnuplot绘图工具.html#色板（palette）设置">#色板（palette）设置</a>
+
+<li>
+<a href="gnuplot绘图工具.html#Image绘图">#Image绘图</a>
+
+<li>
+<a href="gnuplot绘图工具.html#等高线图">#等高线图</a>
+
+<li>
+<a href="gnuplot绘图工具.html#等高线颜色">#等高线颜色</a>
+
+<li>
+<a href="gnuplot绘图工具.html#Table输出">#Table输出</a>
+
+<li>
+<a href="gnuplot绘图工具.html#多图（multiplot）">#多图（multiplot）</a>
+
+<li>
+<a href="gnuplot绘图工具.html#曲线色彩填充">#曲线色彩填充</a>
+
+<li>
+<a href="gnuplot绘图工具.html#填充风格">#填充风格</a>
+
+<li>
+<a href="gnuplot绘图工具.html#柱状图">#柱状图</a>
+
+<li>
+<a href="gnuplot绘图工具.html#阶梯图">#阶梯图</a>
+
+<li>
+<a href="gnuplot绘图工具.html#数据平滑">#数据平滑</a>
+
+<li>
+<a href="gnuplot绘图工具.html#统计直方图">#统计直方图</a>
+
+<li>
+<a href="gnuplot绘图工具.html#三元算符和分段函数">#三元算符和分段函数</a>
+
+<li>
+<a href="gnuplot绘图工具.html#几何图形对象">#几何图形对象</a>
+
+<li>
+<a href="gnuplot绘图工具.html#地图及圆圈数据图">#地图及圆圈数据图</a>
+
+<li>
+<a href="gnuplot绘图工具.html#for循环">#for循环</a>
+
+<li>
+<a href="gnuplot绘图工具.html#动画和reread循环">#动画和reread循环</a>
+
+</ul>
+
+<div id="Gnuplot-数学表达式"><h4 id="数学表达式">数学表达式</h4></div>
+<ul>
+<li>
++ - * / **
+
+<li>
+整数和浮点数：7/2=3 (不是3.5)
+
+<li>
+复数：{3,5} = 3+5i
+
+<li>
+数学函数：几乎同Ｃ语言函数
+
+<li>
+自定义函数：f(x)=x+1、f(x,y)=x+y
+
+<li>
+圆周率(π)：pi
+
+</ul>
+
+<div id="Gnuplot-简单函数绘图"><h4 id="简单函数绘图">简单函数绘图</h4></div>
+<ol>
+<li>
+plot sin(5*x)：发现图中有折线，不圆滑
+
+<li>
+set samples 500：设置采样率（默认100,100，第二个值在3D中有效）
+
+<li>
+replot：重新绘画
+
+<li>
+unset key：去除函数说明
+
+<li>
+set title "sin(5*x)"：设置标题(大多数""和''没区别，但特殊字符如'\n'，单引号表示一般字符，双引号就是则会转意)
+
+<li>
+set xlabel "X"：设置x轴标签
+
+<li>
+set ylabel "Y"：设置y轴标签
+
+</ol>
+
+<div id="Gnuplot-坐标取值范围及刻度"><h4 id="坐标取值范围及刻度">坐标取值范围及刻度</h4></div>
+<p>
+	set xrange [-2*pi:2*pi]
+</p>
+
+</body>
+</html>
