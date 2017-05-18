@@ -1,0 +1,30 @@
+ = MY VIMWIKIS =
+	1. [[VIM用户配置]]
+	2. [[VIMWIKI帮助文档]]
+	3. [[Pro_Git]]
+	4. [[数据结构（C语言版）]]
+	5. [[C++ Primer Plus（第6版）]]
+	6. [[ArchLinux]]
+	7. [[gnuplot绘图工具]]
+
+
+
+==== list of todo items ====
+	* [ ] VIM的使用
+	* [ ] 无线安装archlinux
+	* [ ] 汇编语言
+		* [ ] 汇编语言 王爽
+		* [ ] 80x86汇编语言程序设计教程
+	* [ ] 操作系统
+	* [ ] linux内核代码学习
+	* [ ] 算法导论
+	* [ ] 编译原理
+	* [ ] C语言
+		* [ ] C语言入门经典
+		* [ ] Primer Plus
+		* [ ] C陷阱与缺陷
+		* [ ] C和指针
+		* [ ] C专家编程
+		* [ ] Unix环境高级编程
+	* [ ] C++语言
+		* [ ] C++ Primer Plus（第6版）
