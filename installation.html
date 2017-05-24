@@ -8,6 +8,20 @@
 <body>
 
 <div id="Archlinux-installaton"><h4 id="Archlinux-installaton">Archlinux-installaton</h4></div>
+
+<ol>
+<li>
+<em><span id="Archlinux-installaton-若使用WIFI，则需先配置无线链接："></span><strong id="若使用WIFI，则需先配置无线链接：">若使用WIFI，则需先配置无线链接：</strong></em>
+<pre>
+查看网络设备(wifi一般以wlp开头)：ip link
+使用slp5s0设备扫描WIFI：iw dev wlp5s0 scan | less
+查看是否可以链接：wpa_supplicant -i wlp5s0 -c &lt;(wpa_passphrase "wifi-name" "wifi-password")
+如果链接成功，则后台运行：wpa_supplicant -B -i wlp5s0 -c &lt;(wpa_passphrase "wifi-name" "wifi-password")
+分配IP：dhcpcd wlp5s0
+</pre>
+
+</ol>
+
 <ol>
 <li>
 更新系统时钟
@@ -76,10 +90,10 @@ ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 <li>
 语言环境配置
 <pre>
-修改文件：/etx/locale.gen: 去注释 en_US.UTF-8 UTF-8 这一行
+修改文件：/etc/locale.gen: 去注释 en_US.UTF-8 UTF-8 以及 zh_CH**的中文编码 这几行
 环境生成：locale-gen
 配置全局环境：
-	编辑文件 /etc/locale.conf 添加 LANG=en_US.UTF-8
+	编辑文件 /etc/locale.conf 添加 LANG=en_US.UTF-8(也可设置为中文环境)
 </pre>
 
 <li>
@@ -141,6 +155,9 @@ reboot
 <li>
 以root用户重新登录后，安装桌面环境
 <pre>
+如果是wifi，则先需要链接网络：
+nmcli device wifi connect wifi-name password wifi-password
+
 pacman -S xfce4
 pacman -S xfce4-goodies
 pacman -S xorg
