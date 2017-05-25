@@ -20,9 +20,6 @@
 分配IP：dhcpcd wlp5s0
 </pre>
 
-</ol>
-
-<ol>
 <li>
 更新系统时钟
 <pre>
@@ -30,37 +27,76 @@ timedatectl set-ntp true
 </pre>
 
 <li>
-磁盘分区
+磁盘分区（假设硬盘256G）
+
+<ol>
+<li>
+bios
 <pre>
-分区规划：/:30G  /boot:200M  swap:10G  /home:剩余
-n +30G		(/dev/sda1)
-n +200M		(/dev/sda2)
-n +10G		(/dev/sda3)
-n ..		(/dev/sda4)
+分区规划：swap:10G  /:剩余
+fdisk /dev/sda
+	n +246G		(/dev/sda1)
+	n ..		(/dev/sda2)
 </pre>
 
 <li>
+uefi
+<pre>
+分区规划：esp:300M  swap:10G  /:剩余
+parted /dev/sda	
+mklabel gpt
+mkpart primary 1 300M	(/dev/sda1)
+mkpart primary 300M 11G	(/dev/sda2)
+mkpart primary 11G -1	(/dev/sda3)
+</pre>
+
+</ol>
+<li>
 格式化分区
+
+<ol>
+<li>
+bios
 <pre>
 磁盘分区：
-mkfs.ext4 /dev/sda1[sda3 sda4]
+mkfs.ext4 /dev/sda1
 交换分区：
 mkswap /dev/sda2
 swapon /dev/sda2
 </pre>
 
 <li>
-挂载文件系统
+uefi
 <pre>
-mount /dev/sda1 /mnt
-
-mkdir /mnt/boot
-mount /dev/sda3 /mnt/boot
-
-mkdir /mnt/home
-mount /dev/sda4 /mnt/home
+ESP分区：
+mkfs.vfat -F32 /dev/sda1
+交换分区：
+mkswap /dev/sda2
+swapon /dev/sda2
+磁盘分区：
+mkfs.ext4 /dev/sda3
 </pre>
 
+</ol>
+<li>
+挂载文件系统
+
+<ol>
+<li>
+bios
+<pre>
+mount /dev/sda1 /mnt
+</pre>
+
+<li>
+uefi
+<pre>
+mount /dev/sda3 /mnt
+mkdir -p /mnt/boot/efi
+mount /dev/sda1 /mnt/boot/efi
+</pre>
+
+</ol>
 <li>
 安装基本程序组
 <pre>
@@ -135,14 +171,30 @@ pacman -S bash-completion
 
 <li>
 引导程序制作
+
+<ol>
+<li>
+bios
 <pre>
-pacman -S grub-bios
+pacman -S grub
 pacman -S intel-ucode
 
 grub-install --recheck /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
 </pre>
 
+<li>
+uefi
+<pre>
+pacman -S grub
+pacman -S intel-ucode
+pacman -S efibootmgr
+
+grub-install --efi-directory=/boot/efi --bootloader-id=arch-grub --recheck
+grub-mkconfig -o /boot/grub/grub.cfg
+</pre>
+
+</ol>
 <li>
 退出系统配置
 <pre>
