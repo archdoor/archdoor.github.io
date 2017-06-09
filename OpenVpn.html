@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="Stylesheet" type="text/css" href="style.css">
+<title>OpenVpn</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+
+<pre 	CA:>
+sudo pacman -S openvpn
+sudo pacman -S easy-rsa
+sudo cd /etc/easy-rsa
+sudo easyrsa init-pki
+sudo easyrsa build-ca
+	pass pyrase: liujuntao
+	common name: jett
+sudo cp /etc/easy-rsa/pki/ca.crt /tmp
+</pre>
+
+<pre 	server:>
+chown jett /tmp/ca.crt
+将文件拷贝到server:
+scp /tmp/ca.crt jett@hostname-server:/tmp
+再拷贝到server文件夹下
+mv /tmp/ca.crt /etc/openvpn/server
+chown root:root /etc/openvpn/server/ca.crt
+</pre>
+<p>
+sudo mv /tmp/ca.crt /etc/openvpn/server
+</p>
+<pre 	server:>
+sudo cd /etc/easy-rsa
+sudo easyrsa init-pki
+sudo easyrsa gen-req servername nopass
+	common name: servername
+sudo cp /etc/easy-rsa/pki/private/servername.key /etc/openvpn/server/
+
+
+sudo openssl dhparam -out /etc/openvpn/server/dh.pem 2048
+
+sudo openvpn --genkey --secret /etc/openvpn/server/ta.key
+</pre>
+
+<p>
+sudo cd /etc/easy-rsa
+sudo easyrsa init-pki
+sudo easyrsa gen-req client1 nopass
+	common name: client1
+</p>
+	
+<pre 	server:>
+sudo cp /etc/easy-rsa/pki/reqs/*.req /tmp
+sudo chown jett /tmp/*.req
+scp /tmp/*.req jett@hostname-CA:/tmp
+</pre>
+
+<pre 	CA:>
+sudo cd /etc/easy-rsa
+sudo easyrsa import-req /tmp/servername.req servername
+sudo easyrsa import-req /tmp/client1.req client1
+sudo easyrsa sign-req server servername
+sudo easyrsa sign-req client1 client1
+
+/etc/easy-rsa/pki/issued/servername.crt 
+/etc/easy-rsa/pki/issued/client1.crt
+
+sudo cp /etc/easy-rsa/pki/issued/*.crt /tmp
+sudo chown foo /tmp/*.crt
+sudo scp /tmp/*.crt foo@hostname-of-openvpn_server:/tmp
+
+rm -rf /tmp/*.req
+</pre>
+
+<pre 	server:>
+sudo mv /tmp/servername.crt /etc/openvpn/server/
+sudo chown root:root /etc/openvpn/server/servername.crt
+
+sudo mkdir /etc/easy-rsa/pki/signed
+sudo mv /tmp/client1.crt /etc/easy-rsa/pki/signed
+</pre>
+
+</body>
+</html>
