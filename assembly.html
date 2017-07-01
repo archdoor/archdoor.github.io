@@ -7,6 +7,71 @@
 </head>
 <body>
 
+
+<table>
+<tr>
+<th>
+&nbsp;
+</th>
+<th>
+指令
+</th>
+<th>
+描述
+</th>
+<th>
+示例
+</th>
+</tr>
+<tr>
+<td rowspan="4">
+<span id="-数据交换指令"></span><strong id="数据交换指令">数据交换指令</strong>
+</td>
+<td>
+xchg
+</td>
+<td>
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+bswap
+</td>
+<td>
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+xadd
+</td>
+<td>
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+cmpxchg8b
+</td>
+<td>
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+</table>
+
 <div id="archlinux(x86_64)环境中搭建32位汇编开发环境"><h4 id="archlinux(x86_64)环境中搭建32位汇编开发环境">archlinux(x86_64)环境中搭建32位汇编开发环境</h4></div>
 
 <ol>
@@ -48,7 +113,7 @@ ld --dynamic-linker /lib/ld-linux.so.2 -L/usr/lib32 -lc -m elf_i386 obj.o
 <ul>
 <li>
 数据段
-<pre asm>
+<pre>
 ;示例1(数据段)
 .section .data
 output:	
@@ -215,7 +280,7 @@ output:
 <ul>
 <li>
 定义静态符号
-<pre asm>
+<pre>
 ;定义
 .equ LINUX_SYS_CALL, 0x80
 ;使用
@@ -227,7 +292,7 @@ movl $LINUX_SYS_CALL, %eax
 <ul>
 <li>
 bss段(未初始化数据段block start with symbol)
-<pre asm>
+<pre>
 ;定义
 .section .bss
 .comm buffer, 1024
@@ -239,7 +304,36 @@ bss段(未初始化数据段block start with symbol)
 <ul>
 <li>
 数据传送
+<pre>
+movl：32位长字值
+movw：16位宽字值
+movb：8位字节值
+movs：字符串内存之间传送
+movm：
+cmov：
+</pre>
 
+<ul>
+<li>
+寄存器
+
+<ul>
+<li>
+8个通用寄存器：
+<pre>
+eax:
+ebx:
+ecx:
+edx:
+
+edi:
+esi:
+ebp:
+esp:
+</pre>
+
+</ul>
+</ul>
 </ul>
 
 </body>
