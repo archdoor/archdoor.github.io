@@ -35,7 +35,22 @@ complete install:
 </ol>
 <li>
 config:
+		 cp ~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py ~/
+		 -try:
 
+<ul>
+<li>
+   final_flags.remove( '-stdlib=libc++' )
+    	 -except ValueError:
+
+<li>
+   pass
+		 +'-isystem',
+		 +'/usr/include',
+		 +'-isystem',
+		 +'/usr/include/c++/7.1.1',
+
+</ul>
 </ol>
 
 </body>
