@@ -186,6 +186,9 @@ bios
 pacman -S grub
 pacman -S intel-ucode
 
+有时会需要先清空一下磁盘开始的1M内容：
+dd if=/dev/zero of=/dev/sda seek=1 count=2047 bs=1b
+
 grub-install --recheck /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
 </pre>
