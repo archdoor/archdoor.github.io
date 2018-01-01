@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="Stylesheet" type="text/css" href="style.css">
+<title>libevent</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+
+<div id="libevent安装与使用"><h4 id="libevent安装与使用">libevent安装与使用</h4></div>
+<div id="libevent安装与使用-安装"><h6 id="安装">安装</h6></div>
+<ol>
+<li>
+下载并解压：
+	{
+	wget <a href="http:&#47;&#47;libevent.org&#47;libevent-2.0.22.tar.gz">http://libevent.org/libevent-2.0.22.tar.gz</a>
+	tar -zxvf libevent-2.0.22-stable.tzr.gz
+	cd libevent-2.0.22-stable
+	}
+
+<li>
+配置安装库的目标路径：
+	{
+	./configure --prefix=/usr
+	}
+
+<li>
+编译安装libevent库：
+	{
+	make
+	sudo make install
+	}
+
+<li>
+检测安装是否成功：
+	{
+	ls -al /usr/lib | grep libevent
+	}
+
+</ol>
+
+</body>
+</html>
