@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="Stylesheet" type="text/css" href="/home/liujuntao/vimwiki/style.css">
+<title>ssh反向加转发实现内网穿透远程连接</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+
+<p>
+A:内网1
+B:公网IP
+C:内网2
+</p>
+
+
+<ol>
+<li>
+A -&gt; B建立反向通道
+<pre>
+	ssh -f -N -R 10000:localhost:22 B_public_host
+</pre>
+
+</ol>
+  
+<ol>
+<li>
+B 建立端口转发
+<pre>
+ssh -f -N -g -L 7001:localhost:10000 localhost
+</pre>
+
+</ol>
+  
+<ol>
+<li>
+C 通过连接 B 简介连接 A
+<pre>
+	ssh -p 7001 A_user@B_public_host
+</pre>
+
+</ol>
+  
+<p>
+  自动建立反向通道shell脚本
+</p>
+<pre>
+#!/bin/bash
+while true;do
+RET=`ps ax | grep "ssh -f -N -R 10000:localhost:22" | grep -v "grep"`
+if [ "$RET" = "" ]; then
+echo "restart ssh server"
+ssh -f -N -R 10000:localhost:22 lyb@hahalee.3322.org
+fi
+sleep 10
+done
+</pre>
+
+</body>
+</html>

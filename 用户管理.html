@@ -1,34 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="Stylesheet" type="text/css" href="style.css">
+<link rel="Stylesheet" type="text/css" href="/home/liujuntao/vimwiki/style.css">
 <title>用户管理</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head>
 <body>
 
-<p>
+<pre>
+
 创建用户：
 	create user 'gsmrlab'@'%' identified by 'password';
-</p>
 
-<p>
 查看权限：
 	show grants for gsmrlab;
-</p>
 	
-<p>
 授权：
 	grant select,update,insert on FwsDb.*  to gsmrlab;
-</p>
+    grant all privileges on *.* to gsmrlab;
 
-<p>
 刷新：
 	flush privileges 
-</p>
 	
 	
-<p>
 远程登陆：
 	mysql配置：
 		/etc/mysql/mysql.conf.d/mysqld.cnf 注释掉：bind-address        = 127.0.0.1
@@ -36,7 +30,7 @@
 		update user set host='%' where user='gsmrlab';
 	关闭防火墙：
 		service iptables stop
-</p>
+</pre>
 
 </body>
 </html>

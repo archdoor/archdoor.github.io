@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="Stylesheet" type="text/css" href="/home/liujuntao/vimwiki/style.css">
+<title>FoxitReader-youdao-dic-okular不能输入中文问题</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+
+<div id="linux下的一些软件不能输入中文"><h4 id="linux下的一些软件不能输入中文">linux下的一些软件不能输入中文</h4></div>
+
+<ol>
+<li>
+解决办法：
+<pre>
+在/etc/profile中加入一下几行:
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+</pre>
+
+</ol>
+
+</body>
+</html>

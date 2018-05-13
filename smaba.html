@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="Stylesheet" type="text/css" href="style.css">
+<link rel="Stylesheet" type="text/css" href="/home/liujuntao/vimwiki/style.css">
 <title>smaba</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head>
@@ -19,7 +19,7 @@ sudo apt-get install smbclient
 	path = /home/liujuntao/
 	browseable = yes 
 	read only = no
-	create mask = 0755
+	create mask = 0644
 	directory mask = 0755
 </p>
 	
@@ -28,7 +28,7 @@ smbpasswd -a liujuntao
 </p>
 
 <p>
-systemctl restart smb.service
+systemctl restart smbd.service
 </p>
 
 </body>

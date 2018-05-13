@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="Stylesheet" type="text/css" href="style.css">
+<link rel="Stylesheet" type="text/css" href="/home/liujuntao/vimwiki/style.css">
 <title>ssh config</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head>
 <body>
 
 
-<ul>
-<li>
-ssh 提供了一种优雅且灵活的方式管理多个 ssh 会话，就是利用 ssh 的用户配置文件 config
-
+<div id="ssh 提供了一种优雅且灵活的方式管理多个 ssh 会话，就是利用 ssh 的用户配置文件 config"><h4 id="ssh 提供了一种优雅且灵活的方式管理多个 ssh 会话，就是利用 ssh 的用户配置文件 config">ssh 提供了一种优雅且灵活的方式管理多个 ssh 会话，就是利用 ssh 的用户配置文件 config</h4></div>
 <ol>
 <li>
 简介
@@ -31,6 +28,10 @@ Host	test_1
 	Port			22
 	User			username	
 	IdentityFile	~/.ssh/test_2
+	
+Host	*	
+	ServerAliveInterval		30
+	TCPKeepAlive	yes
 </pre>
 
 <li>
@@ -40,10 +41,6 @@ Host	test_1
 </pre>
 
 </ol>
-</ol>
-</ul>
-		
-<ol>
 <li>
 配置详解
 
@@ -66,9 +63,20 @@ rsa加密方式，在.ssh路径下执行：ssh-keygen -t rsa
 </pre>
 
 <li>
+如果不能自动无密码登陆，则修改/etc/ssh/sshd_config
+<pre>
+RSAAuthentication yes　　
+PubkeyAuthentication yes　　
+AuthorizedKeysFile .ssh/authorized_keys
+</pre>
+
+<li>
 注意事项
 
 <ol>
+<li>
+第一次登陆会询问：远程服务端的指纹是:XXX，是否确定继续登陆
+
 <li>
 用密钥的方式连接服务器是需要服务器上的 ssh 支持的，需要 ssh 的配置文件（默认是在 etc/ssh/sshd_config）里的 PubkeyAuthentication 设置成 yes
 
