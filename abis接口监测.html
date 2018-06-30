@@ -10,329 +10,421 @@
 <div id="目录索引" class="toc"><h1 id="目录索引">目录索引</h1></div>
 <ul>
 <li>
-<a href="abis接口监测.html#1. 专用信道管理消息：Dedicated Channel Management message">1. 专用信道管理消息：Dedicated Channel Management message</a>
-
-<ul>
-<li>
-<a href="abis接口监测.html#1. 专用信道管理消息：Dedicated Channel Management message-CHANNEL ACTIVATION">CHANNEL ACTIVATION</a>
+<a href="abis接口监测.html#主叫流程">主叫流程</a>
 
 </ul>
-</ul>
 
-<div id="1. 专用信道管理消息：Dedicated Channel Management message"><h5 id="1. 专用信道管理消息：Dedicated Channel Management message">1. 专用信道管理消息：Dedicated Channel Management message</h5></div>
-
-<p>
-	通用帧格式:
-</p>
-	
-<table>
-<tr>
-<th>
-组成元素
-</th>
-<th>
-格式
-</th>
-<th>
-长度
-</th>
-</tr>
-<tr>
-<td>
-消息鉴别器
-</td>
-<td>
-V
-</td>
-<td>
-1
-</td>
-</tr>
-<tr>
-<td>
-消息类型
-</td>
-<td>
-V
-</td>
-<td>
-1
-</td>
-</tr>
-<tr>
-<td>
-信道号
-</td>
-<td>
-TV
-</td>
-<td>
-2
-</td>
-</tr>
-<tr>
-<td colspan="3">
-information
-</td>
-</tr>
-</table>
-
-<div id="1. 专用信道管理消息：Dedicated Channel Management message-CHANNEL ACTIVATION"><h6 id="CHANNEL ACTIVATION">CHANNEL ACTIVATION</h6></div>
-
-<table>
-<tr>
-<th>
-组成元素
-</th>
-<th>
-格式
-</th>
-<th>
-长度
-</th>
-</tr>
-<tr>
-<td>
-Message discriminator
-</td>
-<td>
-V
-</td>
-<td>
-1
-</td>
-</tr>
-<tr>
-<td>
-Message type
-</td>
-<td>
-V
-</td>
-<td>
-1
-</td>
-</tr>
-<tr>
-<td>
-Channel number
-</td>
-<td>
-TV
-</td>
-<td>
-2
-</td>
-</tr>
-<tr>
-<td>
-Activation Type
-</td>
-<td>
-TV
-</td>
-<td>
-2
-</td>
-</tr>
-<tr>
-<td>
-Channel Mode
-</td>
-<td>
-TLV
-</td>
-<td>
-8-9
-</td>
-</tr>
-<tr>
-<td>
-Channel Identification
-</td>
-<td>
-TLV
-</td>
-<td>
-8
-</td>
-</tr>
-<tr>
-<td>
-加密信息
-</td>
-<td>
-TLV
-</td>
-<td>
-&gt;=3
-</td>
-</tr>
-<tr>
-<td>
-移交参考
-</td>
-<td>
-TV
-</td>
-<td>
-2
-</td>
-</tr>
-<tr>
-<td>
-BS Power
-</td>
-<td>
-TV
-</td>
-<td>
-2
-</td>
-</tr>
-<tr>
-<td>
-MS Power
-</td>
-<td>
-TV
-</td>
-<td>
-2
-</td>
-</tr>
-<tr>
-<td>
-Timing Advance
-</td>
-<td>
-TV
-</td>
-<td>
-2
-</td>
-</tr>
-<tr>
-<td>
-BS Power Parameters
-</td>
-<td>
-TLV
-</td>
-<td>
-&gt;=2
-</td>
-</tr>
-<tr>
-<td>
-MS Power Parameters
-</td>
-<td>
-TLV
-</td>
-<td>
-&gt;=2
-</td>
-</tr>
-<tr>
-<td>
-Physical Context
-</td>
-<td>
-TLV
-</td>
-<td>
-&gt;=2
-</td>
-</tr>
-<tr>
-<td>
-SACCH Information
-</td>
-<td>
-TLV
-</td>
-<td>
-&gt;=3
-</td>
-</tr>
-<tr>
-<td>
-UIC
-</td>
-<td>
-TLV
-</td>
-<td>
-3
-</td>
-</tr>
-<tr>
-<td>
-Main channel reference
-</td>
-<td>
-TV
-</td>
-<td>
-2
-</td>
-</tr>
-<tr>
-<td>
-MultiRate configuration
-</td>
-<td>
-TLV
-</td>
-<td>
-&gt;=4
-</td>
-</tr>
-<tr>
-<td>
-MultiRate Control
-</td>
-<td>
-TV
-</td>
-<td>
-2
-</td>
-</tr>
-<tr>
-<td>
-Supported Codec Types
-</td>
-<td>
-TLV
-</td>
-<td>
-&gt;=5
-</td>
-</tr>
-</table>
+<hr />
+<hr />
 
 <ol>
 <li>
-加密信息字段只有采用加密时才存在
+Abis接口的第三次主要包括两部分内容：
+
+<ol>
+<li>
+基站管理（BTS Management, BTSM）
+			主要功能：
+
+<ol>
+<li>
+信道管理：BCH（广播信道）、CCH（控制信道）、DCCH（专用控制信道）
 
 <li>
-移交参考只有激活类型是移交时才存在
-
-<li>
-如果BS Power, MS Power and/or Timing Advance字段存在，则是用于初始化发射功率和层1帧头
-
-<li>
-如果激活类型是intra cell channel change，那么Timing Advance字段必须存在
-
-<li>
-BS Power Parameters, MS Power Parameters 表明BTS正在对BS,MS进行功率控制 
-
-<li>
-Physical Context可选 
+MS &lt;--&gt; MSC 层三数据透传，如：MM、CM
 
 </ol>
+<li>
+无线资源管理（RRM）
+
+</ol>
+</ol>
+
+<ol>
+<li>
+LAPD按照是否需要纠错（帧校验）分为两种：
+
+<ol>
+<li>
+非证实模式：只传一次，不管接收情况
+
+<li>
+证实模式：
+
+<ul>
+<li>
+设置两条消息：SABM（设置异步平衡模式）、UA（无编号证实）
+
+<li>
+建立证实模式：发端发一个SABM，收端送一个UA，两遍计数同步，就进入证实模式状态
+
+<li>
+释放证实模式：发端发一个DISC，收端送一个UA，证实模式结束
+
+</ul>
+</ol>
+</ol>
+		
+<div id="主叫流程"><h2 id="主叫流程">主叫流程</h2></div>
+<table>
+<tr>
+<th colspan="2">
+MS
+</th>
+<th colspan="2">
+BTS
+</th>
+<th colspan="2">
+BSC
+</th>
+<th colspan="2">
+MSC
+</th>
+<th colspan="2">
+VLR
+</th>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+CHANNEL_REQUEST →
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+←↑↓→
+</td>
+<td colspan="2">
+CHANNEL_REQUIRED(TA) →
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+← CHANNEL_ACTIVE
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+CHANNEL_ACTIVE_ACK →
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+← IMMEDIATE_ASSIGNMENT
+</td>
+<td colspan="2">
+← IMMEDIATE_ASSIGNMENT/REJ
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+CM_SERVICE_REQUEST →
+</td>
+<td colspan="2">
+CM_SERVICE_REQUEST →
+</td>
+<td colspan="2">
+CM_SERVICE_REQUEST →
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+← AUTHENTICATION_REQUEST
+</td>
+<td colspan="2">
+← AUTHENTICATION_REQUEST
+</td>
+<td colspan="2">
+← AUTHENTICATION_REQUEST
+</td>
+<td colspan="2">
+← AUTHENTICATION_REQUEST
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+<tr>
+<td>
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td colspan="2">
+&nbsp;
+</td>
+<td>
+&nbsp;
+</td>
+</tr>
+</table>
 
 </body>
 </html>
