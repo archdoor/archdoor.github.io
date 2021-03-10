@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="Stylesheet" type="text/css" href="css/vimwiki.css">
+<title>tcpdump</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<div id="主要语法"><h3 id="主要语法" class="header"><a href="#主要语法">主要语法</a></h3></div>
+
+<ol>
+<li>
+过滤主机/IP： 
+<pre>
+抓取所有经过网卡1，目的IP为172.16.7.206的网络数据 
+tcpdump -i eth1 host 172.16.7.206
+</pre>
+
+<li>
+过滤端口： 
+<pre>
+抓取所有经过网卡1，目的端口为1234的网络数据 
+tcpdump -i eth1 dst port 1234
+</pre>
+
+<li>
+过滤特定协议： 
+<pre>
+tcpdump -i eth1 udp
+</pre>
+
+<li>
+抓取本地环路数据包 
+<pre>
+tcpdump -i lo udp 抓取UDP数据
+tcpdump -i lo udp port 1234 抓取端口1234的UDP数据
+tcpdump -i lo port 1234 抓取端口1234的数据 
+</pre>
+
+<li>
+特定协议特定端口： 
+<pre>
+抓取所有经过1234端口的UDP网络数据 
+tcpdump udp port 1234
+</pre>
+
+<li>
+抓取特定类型的数据包： 
+<pre>
+抓取所有经过网卡1的SYN类型数据包
+tcpdump -i eth1 ‘tcp[tcpflags] = tcp-syn’
+抓取经过网卡1的所有DNS数据包（默认端口） 
+tcpdump -i eth1 udp dst port 53
+</pre>
+
+<li>
+逻辑语句过滤： 
+<pre>
+抓取所有经过网卡1，目的网络是172.16，但目的主机不是192.168.1.200的TCP数据 
+tcpdump -i eth1 ‘((tcp) and ((dst net 172.16) and (not dst host 192.168.1.200)))’
+</pre>
+
+<li>
+抓包存取： 
+<pre>
+抓取所有经过网卡1，目的主机为172.16.7.206的端口80的网络数据并存储
+tcpdump -i eth1 host 172.16.7.206 and port 80 -w /tmp/xxx.cap
+</pre>
+
+<li>
+自动按指定文件大小拆分保存： 
+<pre>
+加上-C参数，按文件大小100M保存
+tcpdump -i eth1 host 172.16.7.206 and port 80 -C 100 -w /tmp/xxx.cap
+</pre>
+
+</ol>
+
+</body>
+</html>

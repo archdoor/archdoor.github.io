@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="Stylesheet" type="text/css" href="css/vimwiki.css">
+<title>ssh中转服务器</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<p>
+笔记本A: A_IP
+中转服务器: B_IP B_PORT
+目标服务器: C_IP C_PORT
+</p>
+
+<p>
+在中转服务器上执行：
+ssh -N -f -g -L B_Port:C_IP:C_PORT B_IP
+</p>
+
+<p>
+在笔记本上执行一下命令，可直接连接到C
+ssh -p 2223 B_IP
+</p>
+
+</body>
+</html>

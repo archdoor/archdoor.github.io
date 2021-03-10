@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="Stylesheet" type="text/css" href="css/vimwiki.css">
+<title>gdb</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<div id="断点"><h4 id="断点" class="header"><a href="#断点">断点</a></h4></div>
+
+<ol>
+<li>
+普通断点
+<pre>
+		(gdb) b src/main.cpp:127
+</pre>
+
+<li>
+条件断点
+<pre>
+		(gdb) b src/main.cpp:127 if cnt==10
+</pre>
+
+<li>
+数据断点
+<pre>
+		当该地址上的内容发生改变时就会触发断点
+		(gdb) b *0x400522
+		注意必须加*号
+		另一种当然就是直接设置变量名
+		(gdb) b &amp;变量名
+</pre>
+
+<li>
+函数断点
+<pre>
+		(gdb) b funcName
+</pre>
+
+<li>
+监视
+<pre>
+		(gdb) watch *地址    # 当地址所指内容发送变化时断点
+		(gdb) watch var    #当var值变化时，断点
+		(gdb) watch (condition)    #当条件符合时，断点
+</pre>
+
+</ol>
+
+</body>
+</html>
