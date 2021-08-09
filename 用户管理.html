@@ -4,9 +4,11 @@
 <link rel="Stylesheet" type="text/css" href="css/vimwiki.css">
 <title>用户管理</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 
+<div id="Ubuntu 16.04"><h3 id="Ubuntu 16.04" class="header"><a href="#Ubuntu 16.04">Ubuntu 16.04</a></h3></div>
 <pre>
 
 创建用户：
@@ -17,7 +19,7 @@
 	
 授权：
 	grant select,update,insert on FwsDb.*  to gsmrlab;
-    grant all privileges on *.* to gsmrlab;
+	grant all privileges on *.* to gsmrlab;
 
 刷新：
 	flush privileges 
@@ -30,6 +32,25 @@
 		update user set host='%' where user='gsmrlab';
 	关闭防火墙：
 		service iptables stop
+</pre>
+
+<div id="Ubuntu 20.04"><h3 id="Ubuntu 20.04" class="header"><a href="#Ubuntu 20.04">Ubuntu 20.04</a></h3></div>
+<pre>
+安装：
+	apt install mysql-server mysql-client libmysqlclient-dev -y
+	
+更改mysql默认root用户密码:
+	ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '新密码';
+	FLUSH PRIVILEGES;
+
+创建用户：
+	CREATE USER '新增用户名'@'localhost' IDENTIFIED WITH mysql_native_password BY '密码';
+	GRANT ALL PRIVILEGES ON *.* TO '新增用户名'@'localhost' WITH GRANT OPTION;
+	FLUSH PRIVILEGES;
+	
+修改默认加密方式：
+	default_authentication_plugin=mysql_native_password;
+
 </pre>
 
 </body>

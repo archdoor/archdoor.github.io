@@ -18,6 +18,46 @@
 </pre>
 
 </ol>
+  
+<ol>
+<li>
+配置
+<pre>
+	主要配置文件有ha.cf、haresources、authkeys，在Heartbeat安装后，默认并没有这三个文件
+	cd /usr/share/doc/heartbeat/
+	cp ha.cf.gz haresources.gz authkeys  /etc/ha.d/
+	cd /etc/ha.d/
+	gunzip ha.cf.gz
+	gunzip haresources.gz
+	
+	修改 authkeys:
+		chmod 600 authkeys	
+		vim authkeys
+		填写以下内容:
+		3 md5 Hello!
+		
+	修改 /etc/ha.d/ha.cf
+		keepalive 2
+		deadtime 10
+		initdead 12
+		bcast bond2   #心跳地址，根据实际网卡配置
+		auto_failback off
+		node    GROSDB-BJ-A    #机器名称，请根据实际情况配置，下同
+		node    GROSDB-BJ-B
+		ping_group group1 192.168.20.253 192.168.20.254   #交换机地址，请根据实际情况配置
+		respawn hacluster /usr/lib/heartbeat/ipfail
+		deadping 10
+		use_logd yes
+	
+	修改 /etc/ha.d/haresources
+		设置所有需要开启的虚拟IP和服务，配置信息格式如下: (这些内容在一行，注意空格隔开，请根据实际情况配置地址)
+		GROSDB-BJ-A IPaddr::192.168.20.13/24/bond0:0  drbddisk::r0  Filesystem::/dev/drbd0::/mnt/DBdata::ext4  mysql  
+		
+	重启heartbeat，检查虚拟IP以及数据库是否运行正常
+	  service heartbeat restart
+</pre>
+
+</ol>
 
 </body>
 </html>

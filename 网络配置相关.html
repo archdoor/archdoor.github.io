@@ -4,9 +4,41 @@
 <link rel="Stylesheet" type="text/css" href="css/vimwiki.css">
 <title>网络配置相关</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 
+<div id="目录索引" class="toc"><h1 id="目录索引">目录索引</a></h1></div>
+<ul>
+<li>
+<a href="网络配置相关.html#20.04 配置静态IP">20.04 配置静态IP</a>
+
+<li>
+<a href="网络配置相关.html#16.04 配置静态IP">16.04 配置静态IP</a>
+
+<li>
+<a href="网络配置相关.html#修改网卡名称">修改网卡名称</a>
+
+</ul>
+
+<div id="20.04 配置静态IP"><h1 id="20.04 配置静态IP" class="header"><a href="#20.04 配置静态IP">20.04 配置静态IP</a></h1></div>
+<pre>
+vi /etc/netplan/00-installer-config.yaml
+
+network:
+	ethernets:
+		eno1:
+			dhcp4: no
+			addresses: [172.16.0.223/22]
+	   		gateway4: 172.16.0.1
+	   		nameservers:
+				addresses: [8.8.8.8]
+		enx0a94efa5ba49:
+			dhcp4: true
+	version: 2
+</pre>
+
+<div id="16.04 配置静态IP"><h1 id="16.04 配置静态IP" class="header"><a href="#16.04 配置静态IP">16.04 配置静态IP</a></h1></div>
 <pre>
 查看网关，DNS，IP，物理地址: nmcli dev show
 
@@ -47,6 +79,26 @@
 		此时，文件/etc/resolv.conf中就多了两行：
 		nameserver 8.8.8.8
 		nameserver 8.8.4.4
+</pre>
+
+<div id="修改网卡名称"><h1 id="修改网卡名称" class="header"><a href="#修改网卡名称">修改网卡名称</a></h1></div>
+<pre>
+	示例：enp2s0 修改为 eth0
+
+	步骤1:
+	sudo vi /etc/default/grub
+	GRUB_CMDLINE_LINUX=""
+	修改为：
+	GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"
+	
+	步骤2:
+	sudo update-grub
+	
+	步骤3:
+	sed -i "s/enp2s0/eth0/" /etc/netplan/00-installer-config.yaml
+	
+	步骤4:
+	sudo reboot
 </pre>
 
 </body>
