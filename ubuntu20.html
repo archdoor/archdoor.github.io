@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="Stylesheet" type="text/css" href="css/vimwiki.css">
+<title>ubuntu20</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<ol>
+<li>
+基础软件安装
+<pre>
+apt update -y
+apt upgrade -y
+
+apt install net-tools -y
+
+apt install build-essential cmake pkg-config ssh sshpass tree ifenslave-2.6 -y
+apt install proftpd ntp libpcap-dev tcpdump gdb expect -y
+apt install libevent-dev libboost-dev python-dev -y
+apt install mysql-server mysql-client libmysqlclient-dev -y
+apt install inetutils-telnetd -y
+apt install telnetd  -y
+apt install ansible -y
+
+apt install heartbeat -y
+apt install drbd-utils -y
+</pre>
+
+<ol>
+<li>
+开启rc.local
+<pre>
+touch /etc/rc.local
+chmod +x /etc/rc.local
+
+修改/etc/rc.loca：
+#!/bin/bash
+
+
+exit 0
+</pre>
+
+</ol>
+</ol>
+
+</body>
+</html>

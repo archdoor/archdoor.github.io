@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="Stylesheet" type="text/css" href="css/vimwiki.css">
+<title>高可用mysql集群</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<div id="DRBD + HEARTBEAT + MySQL"><h4 id="DRBD + HEARTBEAT + MySQL" class="header"><a href="#DRBD + HEARTBEAT + MySQL">DRBD + HEARTBEAT + MySQL</a></h4></div>
+
+<ol>
+<li>
+环境与结构：
+<pre>
+Mysql:
+	ubuntu20.04	 mysql5.7.32  172.16.1.231 dbserver1 &lt;master&gt;
+	ubuntu20.04	 mysql5.7.32  172.16.1.232 dbserver2 &lt;slave&gt;
+VIP:
+	172.16.1.235
+说明:
+	必须使得VIP和mysql处于同一网段，否则无法ping通过
+</pre>
+
+<li>
+DRBD安装与配置：
+
+<ol>
+<li>
+磁盘分区（主从节点都执行）
+<pre>
+服务器系统安装过程中，磁盘分区时，划分出一个分区，格式为ext4，不挂载任何目录
+</pre>
+
+<li>
+安装DRBD（主从节点都执行）
+<pre>
+apt install drbd-utils
+</pre>
+
+<li>
+加载DRBD内核模块（主从节点都执行）
+<pre>
+modprobe drbd
+lsmod | grep drbd
+</pre>
+
+<li>
+配置hosts文件（主从节点都执行）
+<pre>
+在主从节点的/etc/hosts文件加上如下两行:
+	172.16.1.231 dbserver1
+	172.16.1.232 dbserver2
+</pre>
+
+<li>
+配置DRBD（主从节点都要配置，内容一致）
+<pre>
+主要配置文件在/etc/drbd.d目录，这里要配置global_common.conf和新建资源文件r0.res，内容如下
+
+/etc/drbd.d/global_common.conf :
+	global {
+		usage-count no;				# 不让官方统计drbd的使用情况
+	}
+	
+	handlers {
+		pri-on-incon-degr "/usr/lib/drbd/notify-pri-on-incon-degr.sh; /usr/lib/drbd/notify-emergency-reboot.sh; echo b &gt; /proc/sysrq-trigger ; reboot -f";
+		pri-lost-after-sb "/usr/lib/drbd/notify-pri-lost-after-sb.sh; /usr/lib/drbd/notify-emergency-reboot.sh; echo b &gt; /proc/sysrq-trigger ; reboot -f";
+		local-io-error "/usr/lib/drbd/notify-io-error.sh; /usr/lib/drbd/notify-emergency-shutdown.sh; echo o &gt; /proc/sysrq-trigger ; halt -f";
+	}
+	
+	common {
+		protocol C;				# C为最安全同时也是性能最好的一种确认写操作完成的方法 
+		disk {
+			on-io-error detach;	# 配置I/O错误处理策略为分离
+		}
+		syncer {
+			rate 300M;			# 数据同步速率 
+		}
+	}
+	
+/etc/drbd.d/r0.res : (文件中不可以有注释)
+	resource r0 {						# 资源名称
+		on dbserver1 {
+			device /dev/drbd0;			# DRBD设备
+			disk /dev/mapper/ubuntu--vg-drbd;	# 磁盘分区
+			address 172.16.1.231:7789;		# 节点1地址
+			meta-disk internal;			# 元数据存储方式
+		}
+		on dbserver2 {
+			device /dev/drbd0;			# DRBD设备
+			disk /dev/mapper/ubuntu--vg-drbd;	# 磁盘分区
+			address 172.16.1.232:7789;		# 节点2地址
+			meta-disk internal;			# 元数据存储方式
+		}
+	}
+
+/etc/drbd.d/r0.res 可以简化如下(文件中不可以有注释):
+	resource r0 {					# 资源名称
+		device /dev/drbd0;			# DRBD设备
+		disk /dev/mapper/ubuntu--vg-drbd;	# 磁盘分区
+		meta-disk internal;			# 元数据存储方式
+		on dbserver1 {
+			address 172.16.1.231:7789;	# 节点1地址
+		}
+		on dbserver2 {
+			address 172.16.1.232:7789;	# 节点2地址
+		}
+	}
+</pre>
+
+<li>
+元数据(metadata)初始化（主从节点都执行）
+<pre>
+先关闭drbd服务: service drbd stop
+将数据同步写入硬盘：dd if=/dev/zero bs=1M count=1 of=/dev/mapper/ubuntu--vg-drbd; sync
+创建DRBD设备元数据：drbdadm create-md r0
+</pre>
+
+<li>
+启动DRBD服务（主从节点都执行）
+<pre>
+service drbd start
+或者
+/etc/init.d/drbd start
+</pre>
+
+<li>
+数据同步（主节点执行）
+<pre>
+drbdadm -- --overwrite-data-of-peer primary all
+或者
+drbdadm -- --overwrite-data-of-peer primary r0
+</pre>
+
+<li>
+查看数据同步进度（主从节点均可执行）
+<pre>
+cat /proc/drbd
+</pre>
+
+<li>
+设置开机自启动（主从节点均可执行）
+<pre>
+systemctl enable drbd
+</pre>
+
+<li>
+后续执行
+<pre>
+此后操作需要在数据同步100%完成后执行！
+</pre>
+
+</ol>
+<li>
+DRBD数据同步测试（不必须）：
+
+<ol>
+<li>
+格式化DRBD磁盘（主节点执行）
+<pre>
+mkfs.ext4 /dev/drbd0 
+</pre>
+
+<li>
+挂载DRBD磁盘（主节点执行）
+<pre>
+mkdir /mnt/database
+mount /dev/drbd0 /mnt/database 
+</pre>
+
+<li>
+写入DRBD磁盘（主节点执行）
+<pre>
+cd /mnt/database
+mkdir test
+touch aaa
+</pre>
+
+<li>
+主节点降级（主节点执行）
+<pre>
+umount /dev/drbd0
+drbdadm secondary r0
+</pre>
+
+<li>
+从节点升级（从节点执行）
+<pre>
+mkdir /mnt/database
+drbdadm primary r0
+mount /dev/drbd0 /mnt/database  # 升级后才有挂载权限
+</pre>
+
+<li>
+查看从节点数据同步（从节点执行）
+<pre>
+ls /mnt/database
+查看是否有在主节点创建的目录test和文件aaa
+</pre>
+
+<li>
+测试环境恢复
+<pre>
+从节点执行：
+	umount /dev/drbd0
+	drbdadm secondary r0
+主节点执行：
+	drbdadm primary r0
+</pre>
+
+</ol>
+<li>
+Mysql初始化：
+<pre>
+从上节的DRBD数据同步测试，可以对Mysql利用DRBD做数据冗余的原理了然于胸。
+</pre>
+
+<ol>
+<li>
+DRBD数据库目录初始化（主节点执行）
+<pre>
+mkfs.ext4 /dev/drbd0 
+mkdir /mnt/database	 # 如果在上节测试时已经创建，可跳过
+mount /dev/drbd0 /mnt/database 
+cp -r /var/lib/mysql /mnt/database
+chown -R mysql:mysql /mnt/database/mysql
+service mysql stop
+umount /mnt/database
+drbdadm secondary r0
+</pre>
+
+<li>
+修改Mysql数据库默认存储位置（主从节点都执行）
+<pre>
+/etc/mysql/mysql.conf.d/mysqld.cnf:
+	# datadir = /var/lib/mysql # 默认情况下数据库的存储位置，注释掉
+	datadir = /mnt/database # 改为DRBD磁盘挂载目录
+</pre>
+
+<li>
+修改MySql安全路径（主从节点都执行）
+<pre>
+/etc/apparmor.d/usr.sbin.mysqld
+	# /var/lib/mysql/ r,
+	# /var/lib/mysql/** rwk,
+	/mnt/database/mysql/ r,
+	/mnt/database/mysql/** rwk,
+	
+service apparmor restart
+</pre>
+
+<li>
+停止MySql服务（主从节点都执行）
+<pre>
+修改mysql数据路径后，要手动把/dev/drbd0挂载到/mnt/database目录，mysql才能启动成功，所以先停止mysql服务:
+service mysql stop
+</pre>
+
+<li>
+禁止MySql开机自启（主从节点都执行）
+<pre>
+后续要利用HeartBeat启动mysql服务器，不需要自动启动
+systemctl disable mysql
+</pre>
+
+</ol>
+<li>
+利用heartbeat实现DRBD控制下的Mysql数据库自动切换
+<pre>
+DRBD可实现主从服务器的数据同步，但如何实现主从数据库服务器对外形成统一接口？
+即外部存储进程，只需要连接一个固定的mysql服务，主服务器故障后，自动切换到从服务器。
+同理，对外部存储进程也可实现主从冗余，避免单点故障。
+</pre>
+
+<ol>
+<li>
+安装heartbeat（主从节点都执行）
+<pre>
+apt install heartbeat
+</pre>
+
+<li>
+拷贝配置模板（主从节点都执行）
+<pre>
+cd /usr/share/doc/heartbeat
+cp ha.cf.gz haresources.gz authkeys /etc/ha.d/
+cd /etc/ha.d/
+gunzip ha.cf.gz
+gunzip haresources.gz
+chmod 600 authkeys
+</pre>
+
+<li>
+配置authkeys（主从节点都执行）
+<pre>
+vi authkeys：
+	auth 3		# 使用3号认证方式（所以要把下面的3取消注释，其他方式均注释掉）
+	#1 crc
+	#2 sha1 HI!
+	3 md5 Hello
+</pre>
+
+<li>
+配置ha.cf（主从节点都执行）
+<pre>
+主从节点上，只有ucast配置不同，填写对端IP。
+		
+vi /etc/ha.d/ha.cf：
+	keepalive 2				# 检测其他节点的时间间隔，默认单位：秒，也可指定毫秒：10ms
+	deadtime 10				# 多长时间检测不到其他节点后认为其他节点故障挂掉，单位：秒
+	initdead 100
+	# bcast   eno1				# 在网卡eno1上，以广播心跳包的方式检测其他节点
+	ucast	eno1 172.16.1.232		# 在网卡eno1上，以单播心跳包的方式检测指定节点
+	auto_failback off			# 主节点故障恢复后，是否需要再自动切换回来
+	node    dbserver1			# 节点名(主)
+	node    dbserver2			# 节点名(从)
+	ping    172.16.0.1			# 网关地址
+	ping_group group1 交换机地址1 交换机地址2
+	respawn hacluster /usr/lib/heartbeat/ipfail
+	deadping 10
+	use_logd yes
+</pre>
+
+<li>
+配置haresources（主从节点内容需完全一样）
+<pre>
+vi /etc/ha.d/haresources：(主节点)
+	dbserver1 IPaddr::172.16.1.235/22/eno1:0  drbddisk::r0  Filesystem::/dev/drbd0::/mnt/database::ext4  mysql  
+	
+说明：
+haresources文件用于指定双机系统的主节点、集群IP、子网掩码、广播地址以及启动的服务等集群资源，
+文件每一行可以包含一个或多个资源脚本名，资源之间使用空格隔开，参数之间使用两个冒号隔开，
+在两个HA节点上该文件必须完全一致，此文件的一般格式为：
+node-name network  &lt;resource-group&gt;
+node-name表示主节点的主机名，必须和ha.cf文件中指定的节点名一致，
+network用于设定集群的IP地址、子网掩码和网络设备标识等。需要注意的是，这里指定的IP地址就是集群对外服务的IP地址，即VIP.
+resource-group用来指定需要Heartbeat托管的服务，也就是这些服务可以由Heartbeat来启动和关闭。
+如果要托管这些服务，就必须将服务写成可以通过start/stop来启动和关闭的脚步，
+然后放到/etc /init.d/或者/etc/ha.d/resource.d/目录下，
+Heartbeat会根据脚本的名称自动去/etc/init.d或者/etc/ha.d/resource.d/目录下找到相应脚步进行启动或关闭操作。
+
+上面的配置中：
+dbserver1 ：为主节点名称
+IPaddr::172.16.1.235/22/eno1:0 ：表示在网卡eno1上设置浮动IP，此IP为集群对外服务IP地址
+drbddisk::r0 : 启动r0资源，会生成r0.res中定义的/dev/drbd0，其中drbddisk时heartbeat自带脚本，在/etc/ha.d/resource.d目录中.
+Filesystem::/dev/drbd0::/mnt/database::ext4 ：等同与命令：mount -t ext4 /dev/drbd0 /mnt/database
+mysql ：启动mysql服务
+</pre>
+
+<li>
+启动haresources（主从节点都执行）
+<pre>
+service heartbeat start
+</pre>
+
+<li>
+查看VIP是否生成（主从节点都执行）
+<pre>
+ifconfig
+</pre>
+
+</ol>
+<li>
+Mysql服务切换测试
+<pre>
+在主节点执行：service hearbeat standby
+在主从节点分别执行：cat /proc/drbd  查看主从是否切换
+在主从节点分别执行：ps -ef | grep mysql 查看主节点mysql服务是否停掉，从节点mysql服务是否启动
+</pre>
+
+<li>
+问题记录
+
+<ol>
+<li>
+主备切换时：
+<pre>
+在主节点执行：drbdadm secondary r0 时，提示一下错误:
+0: State change failed: (-12) Device is held open by someone
+
+解决方法：
+	使用 fuser /dev/drbd0 查看设备被哪个进程占用，然后杀掉该进程。
+</pre>
+
+</ol>
+</ol>
+
+</body>
+</html>
